@@ -4,7 +4,7 @@ import pygame
 # Initialize webcam
 cap = cv2.VideoCapture(0)
 
-# Load Haar cascade for face detection
+# Load Haar cascade for face detection shit really
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 # Initialize pygame mixer
