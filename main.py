@@ -38,11 +38,12 @@ face_mesh = mp_face_mesh.FaceMesh(
     min_tracking_confidence=0.5
 )
 
+threshold_value = -0.12
+
 pygame.mixer.init()
 pygame.mixer.music.load(MUSIC_FILE)
 
 LEFT_IRIS, RIGHT_IRIS, NOSE_TIP = 468, 473, 1
-GAZE_THRESHOLD = -0.12
 is_playing = False
 was_down = False
 print("\nATTENTION: Rocklook started! Look DOWN to play, UP to pause. Press 'q' to quit.\n")
@@ -62,11 +63,15 @@ while True:
         nose_y = lm[NOSE_TIP].y
         offset = iris_y - nose_y
 
-        looking_down = offset < GAZE_THRESHOLD
+        looking_down = offset < threshold_value
         status = "DOWN !!!" if looking_down else "UP !!!"
         color = (0, 0, 255) if looking_down else (0, 255, 0)
 
-        cv2.putText(frame, status, (10, 40),
+        cv2.putText(frame, f"Threshold: {threshold_value:.2f}", (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+        cv2.putText(frame, f"Gaze offset: {offset:.4f}", (10, 55),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
+        cv2.putText(frame, status, (10, 85),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
 
         if looking_down and not was_down:
@@ -85,7 +90,7 @@ while True:
 
         was_down = looking_down
     else:
-        cv2.putText(frame, "No face detected", (10, 40),
+        cv2.putText(frame, "No face detected", (10, 55),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
     cv2.imshow("Rocklook by Gwordal - Enjoy!", frame)
@@ -93,8 +98,8 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Cleanup
 cap.release()
 cv2.destroyAllWindows()
 pygame.mixer.quit()
 print("\nRocklook ended. Come again anytime! 🎸")
+
